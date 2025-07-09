@@ -1,0 +1,105 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Next.js
+.next/
+out/
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Railway
+.railway/
+
+# Docker
+.dockerignore
+
+# Logs
+logs/
+*.log
+
+# Upload directories
+uploads/
+static/uploads/
+static/outputs/
+tmp/
+
+# Claude files
+.claude/
+claude-code-hooks-guide.md
+起诉状修改要求.*
+
+# Project specific temporary files
+超级详细格式化工具实施计划.md
+格式化工具改进实施方案.md
+格式化功能缺失分析.md
+江西财经大学毕业论文完整格式要求.md
+thesis_font_format_requirements.md
+thesis_format_requirements_complete.md
+thesis_structure_requirements.md
+markdown.md
+.mcp.json
+railway-deploy.py
+PROJECT_SUMMARY.md
+tasks/
+
+# Test files
+test_*.py
+*_test.py
+tests/

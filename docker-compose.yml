@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  # 前端服务
+  frontend:
+    build:
+      context: ./web-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    volumes:
+      - ./web-frontend:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - app-network
+
+  # 后端服务
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=development
+      - PORT=8000
+      - CORS_ORIGINS=http://localhost:3000
+      - MAX_FILE_SIZE=10485760
+      - UPLOAD_DIR=/app/static/uploads
+      - OUTPUT_DIR=/app/static/outputs
+    volumes:
+      - ./backend:/app
+      - ./thesis_formatter_complete:/app/thesis_formatter_complete
+      - uploads_data:/app/static/uploads
+      - processed_data:/app/static/outputs
+    networks:
+      - app-network
+
+  # Redis (用于缓存和任务队列)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+  # PostgreSQL (用于存储处理历史)
+  database:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=thesis_formatter
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # Nginx (反向代理)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - app-network
+
+volumes:
+  uploads_data:
+  processed_data:
+  redis_data:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
