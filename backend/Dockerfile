@@ -22,6 +22,9 @@ RUN mkdir -p /app/static/uploads /app/static/outputs
 # 设置权限
 RUN chmod +x /app/static/uploads /app/static/outputs
 
+# 设置Python路径
+ENV PYTHONPATH="/app:/app/thesis_formatter_complete:$PYTHONPATH"
+
 # 暴露端口
 EXPOSE 8000
 

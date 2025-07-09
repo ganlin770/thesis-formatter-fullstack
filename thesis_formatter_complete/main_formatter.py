@@ -13,27 +13,43 @@ from datetime import datetime
 import importlib.util
 
 # 导入所有格式化模块
-from .cover_generator import CoverGenerator, CommitmentGenerator
-from .page_number_handler import PageNumberHandler
-from .keyword_formatter import KeywordFormatter
-from .figure_table_handler import FigureTableHandler
-from .footnote_formatter import FootnoteFormatter
-from .math_formatter import MathFormatter
-from .toc_generator import TOCGenerator
-from .acknowledgment_formatter import AcknowledgmentFormatter
-from .appendix_handler import AppendixHandler
-from .document_reorganizer import DocumentReorganizer
-
-# 导入新的格式化模块
-from .font_manager import FontManager
-from .spacing_manager import SpacingManager
-from .header_handler import HeaderHandler
-
-# 导入基础格式化器
-from .basic_formatters import (
-    HeadingFormatter, ParagraphFormatter,
-    AbstractFormatter, ReferenceFormatter
-)
+try:
+    from .cover_generator import CoverGenerator, CommitmentGenerator
+    from .page_number_handler import PageNumberHandler
+    from .keyword_formatter import KeywordFormatter
+    from .figure_table_handler import FigureTableHandler
+    from .footnote_formatter import FootnoteFormatter
+    from .math_formatter import MathFormatter
+    from .toc_generator import TOCGenerator
+    from .acknowledgment_formatter import AcknowledgmentFormatter
+    from .appendix_handler import AppendixHandler
+    from .document_reorganizer import DocumentReorganizer
+    from .font_manager import FontManager
+    from .spacing_manager import SpacingManager
+    from .header_handler import HeaderHandler
+    from .basic_formatters import (
+        HeadingFormatter, ParagraphFormatter,
+        AbstractFormatter, ReferenceFormatter
+    )
+except ImportError:
+    # 如果相对导入失败，尝试绝对导入
+    from cover_generator import CoverGenerator, CommitmentGenerator
+    from page_number_handler import PageNumberHandler
+    from keyword_formatter import KeywordFormatter
+    from figure_table_handler import FigureTableHandler
+    from footnote_formatter import FootnoteFormatter
+    from math_formatter import MathFormatter
+    from toc_generator import TOCGenerator
+    from acknowledgment_formatter import AcknowledgmentFormatter
+    from appendix_handler import AppendixHandler
+    from document_reorganizer import DocumentReorganizer
+    from font_manager import FontManager
+    from spacing_manager import SpacingManager
+    from header_handler import HeaderHandler
+    from basic_formatters import (
+        HeadingFormatter, ParagraphFormatter,
+        AbstractFormatter, ReferenceFormatter
+    )
 
 # 创建简单的文档分析器
 class DocumentAnalyzer:

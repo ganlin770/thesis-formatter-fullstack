@@ -16,12 +16,29 @@ from datetime import datetime
 from pathlib import Path
 
 # 添加thesis_formatter_complete模块路径
-sys.path.append(str(Path(__file__).parent.parent / "thesis_formatter_complete"))
+thesis_formatter_path = str(Path(__file__).parent.parent / "thesis_formatter_complete")
+sys.path.insert(0, thesis_formatter_path)
+
+# 同时添加当前目录以支持相对导入
+sys.path.insert(0, str(Path(__file__).parent))
 
 try:
     from main_formatter import CompleteThesisFormatter
+    print("成功导入格式化模块")
 except ImportError as e:
     print(f"无法导入格式化模块: {e}")
+    # 尝试备用导入路径
+    try:
+        import sys
+        import os
+        formatter_path = "/app/thesis_formatter_complete"
+        if os.path.exists(formatter_path):
+            sys.path.insert(0, formatter_path)
+            from main_formatter import CompleteThesisFormatter
+            print("通过备用路径成功导入格式化模块")
+    except ImportError as e2:
+        print(f"备用导入也失败: {e2}")
+        CompleteThesisFormatter = None
 
 app = FastAPI(
     title="毕业论文格式化API",
@@ -44,7 +61,13 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "timestamp": datetime.now().isoformat()}
+    # 检查格式化模块是否可用
+    formatter_available = CompleteThesisFormatter is not None
+    return {
+        "status": "healthy" if formatter_available else "degraded",
+        "formatter_available": formatter_available,
+        "timestamp": datetime.now().isoformat()
+    }
 
 @app.post("/api/format")
 async def format_document(
@@ -55,6 +78,13 @@ async def format_document(
     """
     格式化论文文档
     """
+    # 检查格式化模块是否可用
+    if CompleteThesisFormatter is None:
+        raise HTTPException(
+            status_code=503, 
+            detail="格式化服务不可用，请检查服务配置"
+        )
+    
     try:
         # 验证文件类型
         if not file.filename.endswith('.docx'):
@@ -124,6 +154,13 @@ async def validate_document(file: UploadFile = File(...)):
     """
     验证文档格式
     """
+    # 检查格式化模块是否可用
+    if CompleteThesisFormatter is None:
+        raise HTTPException(
+            status_code=503, 
+            detail="格式化服务不可用，请检查服务配置"
+        )
+    
     try:
         if not file.filename.endswith('.docx'):
             raise HTTPException(status_code=400, detail="只支持.docx格式文件")
