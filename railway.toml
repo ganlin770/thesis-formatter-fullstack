@@ -1,0 +1,18 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "backend/Dockerfile"
+
+[deploy]
+numReplicas = 1
+sleepApplication = false
+restartPolicy = "ON_FAILURE"
+healthcheckPath = "/health"
+healthcheckTimeout = 30
+
+[environments.production.variables]
+ENVIRONMENT = "production"
+PORT = "8000"
+CORS_ORIGINS = "https://thesis-formatter-frontend.up.railway.app"
+MAX_FILE_SIZE = "10485760"
+UPLOAD_DIR = "/app/static/uploads"
+OUTPUT_DIR = "/app/static/outputs"

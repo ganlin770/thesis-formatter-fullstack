@@ -1,0 +1,13 @@
+[phases.build]
+cmds = [
+  "echo 'Building thesis-formatter-fullstack...'",
+  "echo 'This is a multi-service application with separate Dockerfiles'"
+]
+
+[phases.install]
+cmds = [
+  "echo 'Please deploy services separately using their respective Dockerfiles:'"
+]
+
+[start]
+cmd = "echo 'This is a multi-service application. Use docker-compose for local development or deploy services individually to Railway.'"

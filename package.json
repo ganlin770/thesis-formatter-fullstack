@@ -1,0 +1,37 @@
+{
+  "name": "thesis-formatter-fullstack",
+  "version": "1.0.0",
+  "description": "江西财经大学现代经济管理学院毕业论文格式化工具 - 全栈应用",
+  "main": "index.js",
+  "scripts": {
+    "dev": "docker-compose up -d",
+    "build": "docker-compose build",
+    "start": "docker-compose up",
+    "stop": "docker-compose down",
+    "deploy": "./deploy.sh deploy",
+    "frontend:dev": "cd web-frontend && npm run dev",
+    "frontend:build": "cd web-frontend && npm run build",
+    "backend:dev": "cd backend && uvicorn main:app --reload",
+    "backend:install": "cd backend && pip install -r requirements.txt"
+  },
+  "keywords": [
+    "thesis",
+    "formatter",
+    "nextjs",
+    "fastapi",
+    "railway",
+    "jiangxi-university"
+  ],
+  "author": "ganlin770",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ganlin770/thesis-formatter-fullstack.git"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "workspaces": [
+    "web-frontend"
+  ]
+}

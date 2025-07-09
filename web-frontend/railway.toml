@@ -1,0 +1,15 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+numReplicas = 1
+sleepApplication = false
+restartPolicy = "ON_FAILURE"
+healthcheckPath = "/"
+healthcheckTimeout = 30
+
+[environments.production.variables]
+NODE_ENV = "production"
+PORT = "3000"
+NEXT_PUBLIC_API_URL = "https://thesis-formatter-backend.up.railway.app"

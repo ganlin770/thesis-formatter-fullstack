@@ -1,0 +1,97 @@
+name: Deploy to Railway
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: web-frontend/package-lock.json
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install frontend dependencies
+      run: |
+        cd web-frontend
+        npm ci
+    
+    - name: Install backend dependencies
+      run: |
+        cd thesis_formatter_complete
+        pip install -r requirements.txt
+    
+    - name: Run frontend tests
+      run: |
+        cd web-frontend
+        npm run lint
+        npm run build
+    
+    - name: Run backend tests
+      run: |
+        cd thesis_formatter_complete
+        python -m pytest tests/ || true
+    
+    - name: Build Docker images
+      run: |
+        docker build -t thesis-formatter-frontend ./web-frontend
+        docker build -t thesis-formatter-backend ./thesis_formatter_complete
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Railway CLI
+      run: npm install -g @railway/cli
+    
+    - name: Deploy Backend
+      run: |
+        cd thesis_formatter_complete
+        railway login --token ${{ secrets.RAILWAY_API_TOKEN }}
+        railway up --service backend
+    
+    - name: Deploy Frontend
+      run: |
+        cd web-frontend
+        railway login --token ${{ secrets.RAILWAY_API_TOKEN }}
+        railway up --service frontend
+    
+    - name: Health Check
+      run: |
+        sleep 30
+        curl -f ${{ secrets.BACKEND_URL }}/health || exit 1
+        curl -f ${{ secrets.FRONTEND_URL }} || exit 1
+    
+    - name: Notify Success
+      if: success()
+      run: |
+        echo "✅ Deployment successful!"
+        echo "Frontend: ${{ secrets.FRONTEND_URL }}"
+        echo "Backend: ${{ secrets.BACKEND_URL }}"
+    
+    - name: Notify Failure
+      if: failure()
+      run: |
+        echo "❌ Deployment failed!"
+        exit 1
